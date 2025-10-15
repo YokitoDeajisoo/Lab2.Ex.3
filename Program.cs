@@ -1,108 +1,152 @@
-﻿using System;
+using System;
 
 class Program
 {
-    // Безпечне введення числа з перевіркою
-    static int SafeInput(string message)
-    {
-        int value;
-        while (true)
-        {
-            Console.Write(message);
-            if (int.TryParse(Console.ReadLine(), out value))
-                return value;
-            else
-                Console.WriteLine("Помилка! Введiть цiле число.");
-        }
-    }
-
-    // Введення масиву з клавіатури
-    static int[] InputArray(int n)
-    {
-        int[] arr = new int[n];
-        Console.WriteLine("Введiть елементи масиву:");
-        for (int i = 0; i < n; i++)
-        {
-            arr[i] = SafeInput($"a[{i}] = ");
-        }
-        return arr;
-    }
-
-    // Заповнення масиву випадковими числами
-    static int[] RandomArray(int n)
-    {
-        int[] arr = new int[n];
-        Random rnd = new Random();
-        for (int i = 0; i < n; i++)
-        {
-            arr[i] = rnd.Next(-100, 101); // діапазон [-100; 100]
-        }
-        return arr;
-    }
-
-    // Пошук максимального за модулем елемента
-    static int MaxAbsElement(int[] arr)
-    {
-        int maxAbs = arr[0];
-        foreach (int x in arr)
-            if (Math.Abs(x) > Math.Abs(maxAbs))
-                maxAbs = x;
-        return maxAbs;
-    }
-
-    // Сума після останнього нульового елемента
-    static int SumAfterLastZero(int[] arr)
-    {
-        int lastZeroIndex = -1;
-        for (int i = 0; i < arr.Length; i++)
-            if (arr[i] == 0)
-                lastZeroIndex = i;
-
-        int sum = 0;
-        if (lastZeroIndex != -1) // якщо є хоча б один нуль
-        {
-            for (int i = lastZeroIndex + 1; i < arr.Length; i++)
-                sum += arr[i];
-        }
-        return sum;
-    }
-
-    // Друк масиву
-    static void PrintArray(int[] arr)
-    {
-        Console.WriteLine("Масив:");
-        foreach (int x in arr)
-            Console.Write(x + " ");
-        Console.WriteLine();
-    }
-
     static void Main()
     {
-        int n = SafeInput("Введiть розмiр масиву n: ");
+        int[] array = null;
+        Random rnd = new Random();
 
-        Console.WriteLine("Оберiть спосiб заповнення масиву:");
-        Console.WriteLine("1 – з клавiатури");
-        Console.WriteLine("2 – випадковими числами");
-
-        int choice;
         while (true)
         {
-            choice = SafeInput("Ваш вибiр (1 або 2): ");
-            if (choice == 1 || choice == 2) break;
-            Console.WriteLine("Помилка! Введiть 1 або 2.");
+            Console.Clear();
+            Console.WriteLine("=== МЕНЮ ===");
+            Console.WriteLine("1 - Ввести масив з клавiатури");
+            Console.WriteLine("2 - Заповнити масив випадковими числами");
+            Console.WriteLine("3 - Вивести масив");
+            Console.WriteLine("4 - Знайти максимальний за модулем елемент");
+            Console.WriteLine("5 - Знайти суму елементiв пiсля останнього нуля");
+            Console.WriteLine("0 - Вихiд");
+            Console.Write("Ваш вибiр: ");
+            string choice = Console.ReadLine();
+
+            Console.Clear();
+
+            switch (choice)
+            {
+                case "1":
+                    array = InputArray();
+                    break;
+
+                case "2":
+                    array = RandomArray(rnd);
+                    Console.WriteLine("Масив згенеровано випадковими числами:");
+                    PrintArray(array);
+                    break;
+
+                case "3":
+                    PrintArray(array);
+                    break;
+
+                case "4":
+                    FindMaxAbs(array);
+                    break;
+
+                case "5":
+                    SumAfterLastZero(array);
+                    break;
+
+                case "0":
+                    Console.WriteLine("Програму завершено.");
+                    return;
+
+                default:
+                    Console.WriteLine("Невiрний вибiр! Спробуйте ще раз.");
+                    break;
+            }
+
+            Console.WriteLine("\nНатиснiть будь-яку клавiшу для повернення до меню...");
+            Console.ReadKey();
+        }
+    }
+
+    static int[] InputArray()
+    {
+        int n;
+        while (true)
+        {
+            Console.Write("Введiть кiлькiсть елементiв (n > 0): ");
+            if (int.TryParse(Console.ReadLine(), out n) && n > 0)
+                break;
+            Console.WriteLine("Помилка! Введiть додатне цiле число.");
         }
 
-        int[] arr = (choice == 1) ? InputArray(n) : RandomArray(n);
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            while (true)
+            {
+                Console.Write($"Введiть елемент [{i}]: ");
+                if (int.TryParse(Console.ReadLine(), out arr[i]))
+                    break;
+                Console.WriteLine("Помилка! Введiть цiле число.");
+            }
+        }
+        return arr;
+    }
 
-        PrintArray(arr);
+    static int[] RandomArray(Random rnd)
+    {
+        int n;
+        while (true)
+        {
+            Console.Write("Введiть кiлькiсть елементiв (n > 0): ");
+            if (int.TryParse(Console.ReadLine(), out n) && n > 0)
+                break;
+            Console.WriteLine("Помилка! Введiть додатне цiле число.");
+        }
 
-        int maxAbs = MaxAbsElement(arr);
-        int sumAfterZero = SumAfterLastZero(arr);
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++)
+            arr[i] = rnd.Next(-100, 101);
+        return arr;
+    }
 
-        Console.WriteLine($"Максимальний за модулем елемент: {maxAbs}");
-        Console.WriteLine($"Сума елементiв пiсля останнього нуля: {sumAfterZero}");
+    static void PrintArray(int[] arr)
+    {
+        if (arr == null)
+        {
+            Console.WriteLine("Масив ще не створено.");
+            return;
+        }
 
-        Console.WriteLine("Натиснiть будь-яку клавiшу для завершення...");
-        Console.ReadKey();
+        Console.WriteLine("Масив: " + string.Join(" ", arr));
+    }
+
+    static void FindMaxAbs(int[] arr)
+    {
+        if (arr == null)
+        {
+            Console.WriteLine("Масив ще не створено.");
+            return;
+        }
+
+        int max = arr[0];
+        foreach (int x in arr)
+            if (Math.Abs(x) > Math.Abs(max)) max = x;
+
+        Console.WriteLine($"Максимальний за модулем елемент: {max} (|{max}| = {Math.Abs(max)})");
+    }
+
+    static void SumAfterLastZero(int[] arr)
+    {
+        if (arr == null)
+        {
+            Console.WriteLine("Масив ще не створено.");
+            return;
+        }
+
+        int lastZero = Array.LastIndexOf(arr, 0);
+        if (lastZero == -1)
+        {
+            Console.WriteLine("У масивi немає нулiв.");
+            return;
+        }
+
+        int sum = 0;
+        for (int i = lastZero + 1; i < arr.Length; i++)
+            sum += arr[i];
+
+        Console.WriteLine($"Сума елементiв пiсля останнього нуля: {sum}");
     }
 }
