@@ -1,6 +1,6 @@
 using System;
 
-class Program
+public class Program
 {
     static void Main()
     {
@@ -39,11 +39,26 @@ class Program
                     break;
 
                 case "4":
-                    FindMaxAbs(array);
+                    if (array == null)
+                    {
+                        Console.WriteLine("Масив ще не створено.");
+                        break;
+                    }
+                    int max = FindMaxAbs(array);
+                    Console.WriteLine($"Максимальний за модулем елемент: {max} (|{max}| = {Math.Abs(max)})");
                     break;
 
                 case "5":
-                    SumAfterLastZero(array);
+                    if (array == null)
+                    {
+                        Console.WriteLine("Масив ще не створено.");
+                        break;
+                    }
+                    int sum = SumAfterLastZero(array);
+                    if (sum == int.MinValue)
+                        Console.WriteLine("У масивi немає нулiв.");
+                    else
+                        Console.WriteLine($"Сума елементiв пiсля останнього нуля: {sum}");
                     break;
 
                 case "0":
@@ -113,40 +128,33 @@ class Program
         Console.WriteLine("Масив: " + string.Join(" ", arr));
     }
 
-    static void FindMaxAbs(int[] arr)
+    // ✅ Оновлені версії методів, які можна тестувати
+    public static int FindMaxAbs(int[] arr)
     {
-        if (arr == null)
-        {
-            Console.WriteLine("Масив ще не створено.");
-            return;
-        }
+        if (arr == null || arr.Length == 0)
+            throw new ArgumentException("Масив порожній або не створений.");
 
         int max = arr[0];
         foreach (int x in arr)
-            if (Math.Abs(x) > Math.Abs(max)) max = x;
+            if (Math.Abs(x) > Math.Abs(max))
+                max = x;
 
-        Console.WriteLine($"Максимальний за модулем елемент: {max} (|{max}| = {Math.Abs(max)})");
+        return max;
     }
 
-    static void SumAfterLastZero(int[] arr)
+    public static int SumAfterLastZero(int[] arr)
     {
-        if (arr == null)
-        {
-            Console.WriteLine("Масив ще не створено.");
-            return;
-        }
+        if (arr == null || arr.Length == 0)
+            throw new ArgumentException("Масив порожній або не створений.");
 
         int lastZero = Array.LastIndexOf(arr, 0);
         if (lastZero == -1)
-        {
-            Console.WriteLine("У масивi немає нулiв.");
-            return;
-        }
+            return int.MinValue; // спеціальне значення, якщо нулів немає
 
         int sum = 0;
         for (int i = lastZero + 1; i < arr.Length; i++)
             sum += arr[i];
 
-        Console.WriteLine($"Сума елементiв пiсля останнього нуля: {sum}");
+        return sum;
     }
 }
